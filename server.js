@@ -8,7 +8,7 @@ console.log(getPosts());
 console.log(`Number of posts: ${getPostLength()}`);
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-//                           common js version                   //
+//                           Common js syntax                    //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
 // const { createRandomNumber, converToFahrenheit } = require('./utils');
 
