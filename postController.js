@@ -7,4 +7,8 @@ function getPosts() {
   return posts;
 }
 
+export function getPostLength() {
+  return posts.length;
+}
+
 export default getPosts;

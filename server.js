@@ -1,9 +1,11 @@
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
 //                           ES6 syntax                          //
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-import getPosts from './postController.js';
+import getPosts, { getPostLength } from './postController.js';
 
 console.log(getPosts());
+
+console.log(`Number of posts: ${getPostLength()}`);
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
 //                           common js version                   //
