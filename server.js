@@ -1,16 +1,22 @@
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-//                           ES6 syntax                          //
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-import getPosts, { getPostLength } from './postController.js';
+import http from 'http';
+import dotenv from 'dotenv';
+dotenv.config();
 
-console.log(getPosts());
 
-console.log(`Number of posts: ${getPostLength()}`);
+const PORT = process.env.PORT;
 
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-//                           Common js syntax                    //
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< //
-// const { createRandomNumber, converToFahrenheit } = require('./utils');
+const server = http.createServer((req, res) => {
+  // res.setHeader('Content-Type', 'text/plain');
+  // res.statusCode = 200;
+  // res.writeHead(400, { 'Content-Type': 'text/html' });
+  // res.writeHead(400, { 'Content-Type': 'application/json' });
 
-// console.log(`Generated random number: ${createRandomNumber()}`);
-// console.log(`Convert Celsius to Fahrenheit: ${converToFahrenheit(0)}`);
+  if (req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('<h1>Homepage</h1>');
+  }
+});
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
