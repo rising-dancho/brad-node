@@ -31,8 +31,12 @@ function getUsersHandler(req, res) {
 
 // Route handler for GET /api/users/:id
 function getUserByIDHandler(req, res) {
-  const id = req.url.split('/')[4];
-  const user = users.find((user) => user.id === parseInt(id));
+  // const id = req.url.split('/')[4];
+  // const user = users.find((user) => user.id === parseInt(id));
+
+  const match = req.url.match(/\/api\/v1\/users\/([0-9]+)/); // used a concept called capturing group () only applicable when using .match() method
+  const id = match ? parseInt(match[1]) : null;
+  const user = users.find((user) => user.id === id);
 
   if (user) {
     res.end(JSON.stringify(user));
@@ -41,26 +45,34 @@ function getUserByIDHandler(req, res) {
   }
 }
 
-// Route handler for User Not Found
+// User Not Found Handler
 function notFoundHandler(req, res) {
-  res.write(404, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ message: 'User does not exist' }));
+}
+
+// Server Error Handler
+function serverErrorHandler(req, res, error) {
+  res.end(JSON.stringify({ error: error.message || 'Interal Server Error' }));
 }
 
 const server = createServer((req, res) => {
   logger(req, res, function next() {
     jsonMiddleware(req, res, function next() {
-      if (req.url === '/' && req.method === 'GET') {
-        rootHandler(req, res);
-      } else if (req.url === '/api/v1/users' && req.method === 'GET') {
-        getUsersHandler(req, res);
-      } else if (
-        req.url.match(/\/api\/v1\/users\/([0-9]+)/) &&
-        req.method === 'GET'
-      ) {
-        getUserByIDHandler(req, res);
-      } else {
-        notFoundHandler(req, res);
+      try {
+        if (req.method === 'GET') {
+          switch (true) {
+            case req.url === '/':
+              return rootHandler(req, res);
+            case req.url === '/api/v1/users':
+              return getUsersHandler(req, res);
+            case req.url.match(/\/api\/v1\/users\/([0-9]+)/):
+              return getUserByIDHandler(req, res);
+            default:
+              return notFoundHandler(req, res);
+          }
+        }
+      } catch (error) {
+        serverErrorHandler(req, res, error);
       }
     });
   });
