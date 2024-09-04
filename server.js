@@ -20,22 +20,22 @@ function jsonMiddleware(res, status) {
 
 // Route handler for GET /
 function rootHandler(req, res) {
-  jsonMiddleware(200, res);
+  jsonMiddleware(res, 200);
   res.end(JSON.stringify({ message: 'Welcome bro' }));
 }
 
-// Route handler for GET /api/users
+// Route handler for GET /api/v1/users
 function getUsersHandler(req, res) {
-  jsonMiddleware(200, res);
+  jsonMiddleware(res, 200);
   res.end(JSON.stringify(users));
 }
 
-// Route handler for GET /api/users/:id
+// Route handler for GET /api/v1/users/:id
 function getUserByIDHandler(req, res) {
-  jsonMiddleware(200, res);
+  jsonMiddleware(res, 200);
   // const id = req.url.split('/')[4]; // Same goal as code below
   const id = req.url.split('/').pop(); // Extract the ID from the URL
-  const user = users.find((user) => user.id === parseInt(id));
+  const user = users.find((user) => user.id === parseInt(id, 10));
 
   if (user) {
     res.end(JSON.stringify(user));
@@ -50,22 +50,27 @@ function notFoundHandler(req, res) {
   res.end(JSON.stringify({ message: 'Resource not found' }));
 }
 
-// Route handler Server Error
+// Route handler for Server Error
 function serverErrorHandler(req, res, error) {
-  jsonMiddleware(500, res);
-  res.end(JSON.stringify({ error: error.message || 'Interal Server Error' }));
+  jsonMiddleware(res, 500);
+  res.end(JSON.stringify({ error: error.message || 'Internal Server Error' }));
+}
+
+// Request method checker
+function action_type(req, method) {
+  return req.method === method;
 }
 
 const server = createServer((req, res) => {
   logger(req, res, function next() {
-    const action_type = req.method === 'GET';
     try {
       switch (true) {
-        case req.url === '/' && action_type:
+        case req.url === '/' && action_type(req, 'GET'):
           return rootHandler(req, res);
-        case req.url === '/api/v1/users' && action_type:
+        case req.url === '/api/v1/users' && action_type(req, 'GET'):
           return getUsersHandler(req, res);
-        case req.url.match(/\/api\/v1\/users\/([0-9]+)/) && action_type:
+        case req.url.match(/^\/api\/v1\/users\/(\d+)$/) &&
+          action_type(req, 'GET'):
           return getUserByIDHandler(req, res);
         default:
           return notFoundHandler(req, res);
@@ -77,5 +82,6 @@ const server = createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server is listening to port ${PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
 });
+[];
