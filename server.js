@@ -33,7 +33,8 @@ function getUsersHandler(req, res) {
 // Route handler for GET /api/users/:id
 function getUserByIDHandler(req, res) {
   jsonMiddleware(200, res);
-  const id = req.url.split('/')[4];
+  // const id = req.url.split('/')[4]; // Same goal as code below
+  const id = req.url.split('/').pop(); // Extract the ID from the URL
   const user = users.find((user) => user.id === parseInt(id));
 
   if (user) {
