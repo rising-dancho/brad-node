@@ -33,7 +33,6 @@ function getUsersHandler(req, res) {
 // Route handler for GET /api/v1/users/:id
 function getUserByIDHandler(req, res) {
   jsonMiddleware(res, 200);
-  // const id = req.url.split('/')[4]; // Same goal as code below
   const id = req.url.split('/').pop(); // Extract the ID from the URL
   const user = users.find((user) => user.id === parseInt(id, 10));
 
@@ -43,6 +42,9 @@ function getUserByIDHandler(req, res) {
     res.end(JSON.stringify({ message: 'User does not exist' }));
   }
 }
+
+// Route handler for POST /api/v1/users
+function createUserHandler() {}
 
 // Route handler for User Not Found
 function notFoundHandler(req, res) {
@@ -84,4 +86,3 @@ const server = createServer((req, res) => {
 server.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
-[];
