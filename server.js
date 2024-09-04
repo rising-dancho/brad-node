@@ -46,8 +46,8 @@ function getUserByIDHandler(req, res) {
 
 // Route handler for User Not Found
 function notFoundHandler(req, res) {
-  jsonMiddleware(404, res);
-  res.end(JSON.stringify({ message: 'User does not exist' }));
+  jsonMiddleware(res, 404);
+  res.end(JSON.stringify({ message: 'Resource not found' }));
 }
 
 // Route handler Server Error
