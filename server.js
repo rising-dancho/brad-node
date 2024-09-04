@@ -14,29 +14,27 @@ function logger(req, res, next) {
 }
 
 // JSON middleware
-function jsonMiddleware(req, res, next) {
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  next();
+function jsonMiddleware(status, res) {
+  res.writeHead(status, { 'Content-Type': 'application/json' });
 }
 
 // Route handler for GET /
 function rootHandler(req, res) {
+  jsonMiddleware(200, res);
   res.end(JSON.stringify({ message: 'Welcome bro' }));
 }
 
 // Route handler for GET /api/users
 function getUsersHandler(req, res) {
+  jsonMiddleware(200, res);
   res.end(JSON.stringify(users));
 }
 
 // Route handler for GET /api/users/:id
 function getUserByIDHandler(req, res) {
-  // const id = req.url.split('/')[4];
-  // const user = users.find((user) => user.id === parseInt(id));
-
-  const match = req.url.match(/\/api\/v1\/users\/([0-9]+)/); // used a concept called capturing group () only applicable when using .match() method
-  const id = match ? parseInt(match[1]) : null;
-  const user = users.find((user) => user.id === id);
+  jsonMiddleware(200, res);
+  const id = req.url.split('/')[4];
+  const user = users.find((user) => user.id === parseInt(id));
 
   if (user) {
     res.end(JSON.stringify(user));
@@ -45,36 +43,35 @@ function getUserByIDHandler(req, res) {
   }
 }
 
-// User Not Found Handler
+// Route handler for User Not Found
 function notFoundHandler(req, res) {
+  jsonMiddleware(404, res);
   res.end(JSON.stringify({ message: 'User does not exist' }));
 }
 
-// Server Error Handler
+// Route handler Server Error
 function serverErrorHandler(req, res, error) {
+  jsonMiddleware(500, res);
   res.end(JSON.stringify({ error: error.message || 'Interal Server Error' }));
 }
 
 const server = createServer((req, res) => {
   logger(req, res, function next() {
-    jsonMiddleware(req, res, function next() {
-      try {
-        if (req.method === 'GET') {
-          switch (true) {
-            case req.url === '/':
-              return rootHandler(req, res);
-            case req.url === '/api/v1/users':
-              return getUsersHandler(req, res);
-            case req.url.match(/\/api\/v1\/users\/([0-9]+)/):
-              return getUserByIDHandler(req, res);
-            default:
-              return notFoundHandler(req, res);
-          }
-        }
-      } catch (error) {
-        serverErrorHandler(req, res, error);
+    const action_type = req.method === 'GET';
+    try {
+      switch (true) {
+        case req.url === '/' && action_type:
+          return rootHandler(req, res);
+        case req.url === '/api/v1/users' && action_type:
+          return getUsersHandler(req, res);
+        case req.url.match(/\/api\/v1\/users\/([0-9]+)/) && action_type:
+          return getUserByIDHandler(req, res);
+        default:
+          return notFoundHandler(req, res);
       }
-    });
+    } catch (error) {
+      serverErrorHandler(req, res, error);
+    }
   });
 });
 
