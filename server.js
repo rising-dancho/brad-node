@@ -14,7 +14,7 @@ function logger(req, res, next) {
 }
 
 // JSON middleware
-function jsonMiddleware(status, res) {
+function jsonMiddleware(res, status) {
   res.writeHead(status, { 'Content-Type': 'application/json' });
 }
 
