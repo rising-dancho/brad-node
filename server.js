@@ -44,7 +44,20 @@ function getUserByIDHandler(req, res) {
 }
 
 // Route handler for POST /api/v1/users
-function createUserHandler() {}
+function createUserHandler(req, res) {
+  let body = '';
+  // Listen for the data
+  req.on('data', (chunk) => {
+    body += chunk.toString();
+  }); // .on is a listener. it's listening for an even called "data"
+
+  req.on('end', () => {
+    const newUser = JSON.parse(body); // the body comes in as JSON and we convert it into a javascript object
+    users.push(newUser);
+    jsonMiddleware(res, 201);
+    res.end(JSON.stringify(newUser));
+  }); // allows us to have access to the "body" variable at the top
+}
 
 // Route handler for User Not Found
 function notFoundHandler(req, res) {
@@ -74,6 +87,8 @@ const server = createServer((req, res) => {
         case req.url.match(/^\/api\/v1\/users\/(\d+)$/) &&
           action_type(req, 'GET'):
           return getUserByIDHandler(req, res);
+        case req.url === '/api/v1/users' && action_type(req, 'POST'):
+          return createUserHandler(req, res);
         default:
           return notFoundHandler(req, res);
       }
